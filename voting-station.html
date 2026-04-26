@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOTE — 课堂作品投票</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #D70050;
+            --black: #000;
+            --white: #fff;
+            --gray-light: #f5f5f5;
+            --gray: #888;
+            --gray-dark: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            line-height: 1.4;
+        }
+
+        /* 顶部导航 */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 4px solid var(--black);
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-link {
+            padding: 12px 24px;
+            border: 2px solid var(--black);
+            background: var(--white);
+            color: var(--black);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link:not(:last-child) {
+            border-right: none;
+        }
+
+        .nav-link:hover {
+            background: var(--gray-light);
+        }
+
+        .nav-link.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* 主内容区 */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* 英雄区 */
+        .hero {
+            margin-bottom: 80px;
+        }
+
+        .hero-title {
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+        }
+
+        .hero-title span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-top: 24px;
+            color: var(--gray);
+            max-width: 400px;
+        }
+
+        /* 签到区 */
+        .checkin {
+            border: 4px solid var(--black);
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+
+        .checkin-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checkin-title::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+        }
+
+        .checkin-form {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .checkin-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 16px 20px;
+            border: 3px solid var(--black);
+            font-family: inherit;
+            font-size: 1rem;
+            background: var(--white);
+        }
+
+        .checkin-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .checkin-btn {
+            padding: 16px 40px;
+            border: 3px solid var(--black);
+            background: var(--primary);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.1s;
+        }
+
+        .checkin-btn:hover {
+            background: var(--black);
+            border-color: var(--black);
+        }
+
+        .checkin-status {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .checkin-status strong {
+            color: var(--primary);
+        }
+
+        /* TOP3 区域 */
+        .top3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            background: var(--black);
+            border: 4px solid var(--black);
+            margin-bottom: 60px;
+        }
+
+        .top3-item {
+            background: var(--white);
+            padding: 40px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .top3-rank {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--gray-light);
+            line-height: 1;
+        }
+
+        .top3-item:nth-child(1) .top3-rank { color: var(--primary); }
+        .top3-item:nth-child(2) .top3-rank { color: var(--gray); }
+        .top3-item:nth-child(3) .top3-rank { color: #A0522D; }
+
+        .top3-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 16px;
+            word-break: break-word;
+        }
+
+        .top3-votes {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 8px;
+        }
+
+        /* 作品网格 */
+        .candidates {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 4px;
+            background: var(--black);
+        }
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 4px;
+            background: var(--black);
+            border: 4px solid var(--black);
+        }
+
+        .candidate-card {
+            background: var(--white);
+            padding: 32px 20px;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .candidate-card:hover {
+            background: var(--gray-light);
+        }
+
+        .candidate-card.voted {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .candidate-card.voted .candidate-votes {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .candidate-id {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .candidate-card.voted .candidate-id {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .candidate-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .candidate-votes {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 12px;
+        }
+
+        /* 管理页面 */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.active {
+            display: block;
+        }
+
+        .admin-section {
+            border: 4px solid var(--black);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 3px solid var(--black);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .admin-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .admin-stats {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: var(--gray-light);
+            margin-bottom: 24px;
+        }
+
+        .stat {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .admin-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 14px 28px;
+            border: 3px solid var(--black);
+            background: var(--white);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.1s;
+        }
+
+        .admin-btn:hover {
+            background: var(--black);
+            color: var(--white);
+        }
+
+        .admin-btn.danger {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .admin-btn.danger:hover {
+            background: var(--black);
+            border-color: var(--black);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--black);
+            color: var(--white);
+            padding: 16px 32px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .toast.error {
+            background: var(--black);
+        }
+
+        /* 空状态 */
+        .empty {
+            padding: 80px 40px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 1.1rem;
+            border: 4px solid var(--black);
+            background: var(--gray-light);
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .top3 {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                padding: 16px 20px;
+            }
+
+            .main {
+                padding: 40px 20px;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .checkin {
+                padding: 24px;
+            }
+
+            .admin-section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-logo">VOTE<span>.</span></div>
+        <div class="nav-links">
+            <button class="nav-link active" data-mode="vote">投票</button>
+            <button class="nav-link" data-mode="admin">管理</button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- 投票模式 -->
+        <div class="vote-panel" id="votePanel">
+            <section class="hero">
+                <h1 class="hero-title">选出<br><span>TOP 3</span></h1>
+                <p class="hero-subtitle">每个作品限投一票，可给多个作品投票</p>
+            </section>
+
+            <section class="checkin">
+                <h2 class="checkin-title">签到</h2>
+                <div class="checkin-form">
+                    <input type="text" class="checkin-input" id="voterName" placeholder="输入你的名字 / 学号">
+                    <button class="checkin-btn" onclick="checkIn()">确认</button>
+                </div>
+                <div class="checkin-status" id="checkinStatus"></div>
+            </section>
+
+            <section class="top3" id="top3Section">
+                <div class="top3-item">
+                    <div class="top3-rank">1</div>
+                    <div class="top3-name" id="rank1Name">—</div>
+                    <div class="top3-votes" id="rank1Votes">0 票</div>
+                </div>
+                <div class="top3-item">
+                    <div class="top3-rank">2</div>
+                    <div class="top3-name" id="rank2Name">—</div>
+                    <div class="top3-votes" id="rank2Votes">0 票</div>
+                </div>
+                <div class="top3-item">
+                    <div class="top3-rank">3</div>
+                    <div class="top3-name" id="rank3Name">—</div>
+                    <div class="top3-votes" id="rank3Votes">0 票</div>
+                </div>
+            </section>
+
+            <section class="candidates">
+                <h2 class="section-title">作品</h2>
+                <div class="candidates-grid" id="candidatesGrid"></div>
+            </section>
+        </div>
+
+        <!-- 管理模式 -->
+        <div class="admin-panel" id="adminPanel">
+            <section class="admin-section">
+                <h2 class="admin-title">导入作品</h2>
+                <textarea class="admin-textarea" id="importText" placeholder="每行一个作品名称&#10;&#10;作品1&#10;作品2&#10;作品3"></textarea>
+                <div class="admin-btns">
+                    <button class="admin-btn" onclick="importCandidates()">导入</button>
+                    <button class="admin-btn" onclick="loadDemoData()">示例</button>
+                </div>
+            </section>
+
+            <section class="admin-section">
+                <h2 class="admin-title">数据统计</h2>
+                <div class="admin-stats" id="adminStats">
+                    <div>
+                        <div class="stat" id="statCandidates">0</div>
+                        <div class="stat-label">作品数量</div>
+                    </div>
+                    <div>
+                        <div class="stat" id="statVotes">0</div>
+                        <div class="stat-label">投票次数</div>
+                    </div>
+                    <div>
+                        <div class="stat" id="statVoters">0</div>
+                        <div class="stat-label">投票人数</div>
+                    </div>
+                </div>
+                <div class="admin-btns">
+                    <button class="admin-btn danger" onclick="clearAllData()">清空数据</button>
+                </div>
+            </section>
+
+            <section class="admin-section">
+                <h2 class="admin-title">完整排名</h2>
+                <div class="candidates-grid" id="resultsGrid"></div>
+            </section>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const STORAGE_KEY = 'vote_station_v3';
+
+        let appData = {
+            candidates: [],
+            votes: {},
+            currentVoter: null
+        };
+
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+            if (!appData.votes) appData.votes = {};
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => toast.className = 'toast', 2500);
+        }
+
+        // 模式切换
+        document.querySelectorAll('.nav-link').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const mode = btn.dataset.mode;
+                if (mode === 'vote') {
+                    document.getElementById('votePanel').classList.remove('admin-panel');
+                    document.getElementById('adminPanel').classList.remove('active');
+                    renderVotingPage();
+                } else {
+                    document.getElementById('votePanel').classList.add('admin-panel');
+                    document.getElementById('adminPanel').classList.add('active');
+                    renderAdminPage();
+                }
+            });
+        });
+
+        function checkIn() {
+            const name = document.getElementById('voterName').value.trim();
+            if (!name) {
+                showToast('请输入名字或学号', 'error');
+                return;
+            }
+            appData.currentVoter = name;
+            saveData();
+            showToast('签到成功', 'success');
+            renderVotingPage();
+        }
+
+        function importCandidates() {
+            const text = document.getElementById('importText').value.trim();
+            if (!text) {
+                showToast('请输入作品名称', 'error');
+                return;
+            }
+
+            const names = text.split(/[\n,;]+/).map(s => s.trim()).filter(s => s);
+            if (names.length === 0) {
+                showToast('未识别到有效名称', 'error');
+                return;
+            }
+
+            const existing = new Set(appData.candidates.map(c => c.name));
+            let id = appData.candidates.length ? Math.max(...appData.candidates.map(c => c.id)) + 1 : 1;
+
+            const newCandidates = names.filter(name => !existing.has(name)).map(name => ({ id: id++, name }));
+
+            appData.candidates = [...appData.candidates, ...newCandidates];
+            saveData();
+
+            showToast(`导入 ${newCandidates.length} 个作品`, 'success');
+            document.getElementById('importText').value = '';
+            renderAdminPage();
+        }
+
+        function loadDemoData() {
+            const demos = ['春天里', '青春舞曲', '童年的回忆', '梦想之光', '奋斗旋律', '校园钟声'];
+            document.getElementById('importText').value = demos.join('\n');
+        }
+
+        function vote(candidateId) {
+            if (!appData.currentVoter) {
+                showToast('请先签到', 'error');
+                return;
+            }
+
+            const voterId = appData.currentVoter;
+            const votes = appData.votes[candidateId] || [];
+
+            if (votes.includes(voterId)) {
+                showToast('已投票', 'error');
+                return;
+            }
+
+            appData.votes[candidateId] = [...votes, voterId];
+            saveData();
+            showToast('投票成功', 'success');
+            renderVotingPage();
+        }
+
+        function renderVotingPage() {
+            const status = document.getElementById('checkinStatus');
+            const grid = document.getElementById('candidatesGrid');
+
+            status.innerHTML = appData.currentVoter
+                ? `✓ 已签到：<strong>${appData.currentVoter}</strong>`
+                : '请先签到';
+
+            if (appData.candidates.length === 0) {
+                grid.innerHTML = '<div class="empty">暂无作品，请到管理页面导入</div>';
+                return;
+            }
+
+            grid.innerHTML = appData.candidates.map(c => {
+                const votes = appData.votes[c.id] || [];
+                const hasVoted = votes.includes(appData.currentVoter);
+                return `
+                    <div class="candidate-card ${hasVoted ? 'voted' : ''}" onclick="vote(${c.id})">
+                        <div class="candidate-id">NO.${c.id}</div>
+                        <div class="candidate-name">${c.name}</div>
+                        <div class="candidate-votes">${votes.length} 票</div>
+                    </div>
+                `;
+            }).join('');
+
+            // TOP3
+            const sorted = appData.candidates
+                .map(c => ({ ...c, count: (appData.votes[c.id] || []).length }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 3);
+
+            const ranks = [
+                { name: 'rank1Name', votes: 'rank1Votes' },
+                { name: 'rank2Name', votes: 'rank2Votes' },
+                { name: 'rank3Name', votes: 'rank3Votes' }
+            ];
+
+            sorted.forEach((c, i) => {
+                document.getElementById(ranks[i].name).textContent = c.name || '—';
+                document.getElementById(ranks[i].votes).textContent = c.count + ' 票';
+            });
+
+            for (let i = sorted.length; i < 3; i++) {
+                document.getElementById(ranks[i].name).textContent = '—';
+                document.getElementById(ranks[i].votes).textContent = '0 票';
+            }
+        }
+
+        function renderAdminPage() {
+            const totalVotes = Object.values(appData.votes).reduce((sum, arr) => sum + arr.length, 0);
+            const voterCount = new Set(Object.values(appData.votes).flat()).size;
+
+            document.getElementById('statCandidates').textContent = appData.candidates.length;
+            document.getElementById('statVotes').textContent = totalVotes;
+            document.getElementById('statVoters').textContent = voterCount;
+
+            const grid = document.getElementById('resultsGrid');
+            if (appData.candidates.length === 0) {
+                grid.innerHTML = '<div class="empty">暂无数据</div>';
+                return;
+            }
+
+            const sorted = appData.candidates
+                .map(c => ({ ...c, count: (appData.votes[c.id] || []).length }))
+                .sort((a, b) => b.count - a.count);
+
+            const medals = ['🥇', '🥈', '🥉'];
+            grid.innerHTML = sorted.map((c, i) => `
+                <div class="candidate-card">
+                    <div class="candidate-id">${medals[i] || 'NO.' + (i + 1)}</div>
+                    <div class="candidate-name">${c.name}</div>
+                    <div class="candidate-votes">${c.count} 票</div>
+                </div>
+            `).join('');
+        }
+
+        function clearAllData() {
+            if (!confirm('确定清空所有数据？')) return;
+            appData = { candidates: [], votes: {}, currentVoter: null };
+            saveData();
+            showToast('已清空', 'success');
+            renderAdminPage();
+        }
+
+        loadData();
+        renderVotingPage();
+    </script>
+</body>
+</html>
